@@ -264,22 +264,19 @@ class Bitrix24 implements iBitrix24
             throw new Bitrix24Exception('application id not found, you must call setRefreshToken method before');
         } elseif (0 === count($applicationScope)) {
             throw new Bitrix24Exception('application scope not found, you must call setApplicationScope method before');
-        } /*elseif (null === $redirectUri) {
+        } elseif (null === $redirectUri) {
             throw new Bitrix24Exception('application redirect URI not found, you must call setRedirectUri method before');
         }
-        */
 
 //		$url = 'https://'.self::OAUTH_SERVER.'/oauth/token/'.
         $url = 'https://' . $this->getDomain() . '/oauth/token/' .
             '?client_id=' . urlencode($applicationId) .
             '&grant_type=refresh_token' .
             '&client_secret=' . $applicationSecret .
-            '&refresh_token=' . $refreshToken;
-        
-        if (null != $redirectUri) {
-            $url .= '&redirect_uri=' . urlencode($redirectUri);
-        }
-            
+            '&refresh_token=' . $refreshToken .
+            '&redirect_uri=' . urlencode($redirectUri).
+            '&scope=' . implode(',', $applicationScope);
+
         $requestResult = $this->executeRequest($url);
         // handling bitrix24 api-level errors
         $this->handleBitrix24APILevelErrors($requestResult, 'refresh access token');
